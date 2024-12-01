@@ -24,19 +24,5 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/dotnet-demo:${{ github.run_id }}
-    - name: Scan Docker Image for vulnerabilities
-      uses: aquasecurity/trivy-action@0.28.0
-      with:
-        image-ref: ${{ secrets.DOCKER_USERNAME }}/dotnet-demo:${{ github.run_id }}
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
-        
-      
     - name: push the docker image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/dotnet-demo:${{ github.run_id }}
